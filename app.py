@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, send_file
 import pandas as pd
 from openpyxl import load_workbook
 from docx import Document
+from docxtpl import DocxTemplate  # pip install docxtpl
+import docx
 # from docx.exceptions import PendingDeprecationWarning
 # import warnings
 
@@ -22,20 +24,20 @@ def render():
     # 读取 Excel 文件
     df = pd.read_excel(excel_file)
 
+    output_dir = "output/"
     # 渲染 Word 文件
-    document = Document(word_file)
-    table = document.tables[0]
-    for i, row in df.iterrows():
-        cells = table.rows[i + 1].cells
-        cells[0].text = row['Name']
-        cells[1].text = str(row['Age'])
-        cells[2].text = row['Gender']
+    for record in df.to_dict(orient="records"):
+        doc = DocxTemplate(word_file)
+        doc.render(record)
 
-    # 保存渲染后的 Word 文件
-    document.save('output.docx')
+        output_path = output_dir + f"{record['filename']}"
+        doc.save(output_path)
+
+        # 保存渲染后的 Word 文件
+        # document.save('output.docx')
 
     # 提供下载链接ggg
-    return send_file('output.docx', as_attachment=True)
+    return send_file(output_path, as_attachment=True)
 
 @app.route('/doc')
 def doc():
@@ -43,4 +45,4 @@ def doc():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000, debug=True)
