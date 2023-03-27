@@ -1,22 +1,91 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8">
     <title>Excel to Word Renderer</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+        background-color: #f6f8fa;
+        margin: 0;
+      }
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 1em;
+      }
+      .box {
+        background-color: #fff;
+        border: 1px solid #d1d5da;
+        border-radius: 6px;
+        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1em;
+        padding: 1em;
+      }
+      .form-control {
+        margin-bottom: 1em;
+        width: 100%;
+      }
+      .form-control label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.5em;
+      }
+      .form-control input[type="file"] {
+        padding: 0.5em;
+        border-radius: 3px;
+        border: 1px solid #d1d5da;
+        background-color: #fafbfc;
+        color: #24292e;
+        transition: border-color 0.2s ease-in-out;
+      }
+      .form-control input[type="file"]:hover,
+      .form-control input[type="file"]:focus {
+        border-color: #0366d6;
+      }
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+      }
+      .btn {
+        background-color: #0366d6;
+        border-radius: 3px;
+        border: none;
+        color: #fff;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 600;
+        padding: 0.5em 1em;
+        transition: background-color 0.2s ease-in-out;
+      }
+      .btn:hover,
+      .btn:focus {
+        background-color: #0649a0;
+      }
+    </style>
   </head>
   <body>
-    <h1>Excel to Word Renderer</h1>
-    <form action="{{ url_for('render') }}" method="post" enctype="multipart/form-data">
-      <p>
-        <label for="excel-file">Excel File:</label>
-        <input type="file" name="excel_file" id="excel-file" accept=".xlsx">
-      </p>
-      <p>
-        <label for="word-file">Word File:</label>
-        <input type="file" name="word_file" id="word-file" accept=".docx">
-      </p>
-      <p>
-        <input type="submit" value="Render">
-      </p>
-    </form>
+    <div class="container">
+      <div class="box">
+        <h1 class="h3">Excel to Word Renderer</h1>
+        <form action="{{ url_for('render') }}" method="post" enctype="multipart/form-data">
+          <div class="form-control">
+            <label for="excel-file">Excel File:</label>
+            <input type="file" name="excel_file" id="excel-file" accept=".xlsx" required>
+          </div>
+          <div class="form-control">
+            <label for="word-file">Word File:</label>
+            <input type="file" name="word_file" id="word-file" accept=".docx" required>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn">Render</button>
+          </div>
+          <div class="doc-link">
+          <a href="{{ url_for('doc') }}">说明文档</a>
+          </div>
+        </form>
+      </div>
+    </div>
   </body>
 </html>

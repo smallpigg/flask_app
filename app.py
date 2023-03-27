@@ -37,6 +37,10 @@ def render():
     # 提供下载链接ggg
     return send_file('output.docx', as_attachment=True)
 
+@app.route('/doc')
+def doc():
+    return render_template('doc.html')
+
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000)
