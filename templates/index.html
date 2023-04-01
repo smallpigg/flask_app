@@ -68,21 +68,23 @@
   <body>
     <div class="container">
       <div class="box">
-        <h1 class="h3">Excel to Word Renderer</h1>
+        <h3 class="h3">Word文件生成程序</h3>
         <form action="{{ url_for('render') }}" method="post" enctype="multipart/form-data">
           <div class="form-control">
-            <label for="excel-file">Excel File:</label>
+            <label for="excel-file">Excel数据文件:</label>
             <input type="file" name="excel_file" id="excel-file" accept=".xlsx" required>
           </div>
           <div class="form-control">
-            <label for="word-file">Word File:</label>
+            <label for="word-file">Word模板文件:</label>
             <input type="file" name="word_file" id="word-file" accept=".docx" required>
           </div>
           <div class="form-actions">
-            <button type="submit" class="btn">Render</button>
+            <button type="submit" class="btn">生成新文件</button>
           </div>
           <div class="doc-link">
           <a href="{{ url_for('doc') }}">说明文档</a>
+          <div class="doc-link">
+          <a href="{{ url_for('about') }}">关于</a>
           </div>
         </form>
       </div>

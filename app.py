@@ -9,9 +9,13 @@ import docx
 
 app = Flask(__name__)
 
+# 定义全局变量并初始化为0
+visit_count = 0
 
 @app.route('/')
 def index():
+    global visit_count
+    visit_count += 1
     return render_template('index.html')
 
 
@@ -42,6 +46,10 @@ def render():
 @app.route('/doc')
 def doc():
     return render_template('doc.html')
+
+@app.route('/about')
+def about():
+    return render_template('about.html', visit_count=visit_count)
 
 
 if __name__ == '__main__':
