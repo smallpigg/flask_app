@@ -1,23 +1,19 @@
-import pandas as pd
-from docxtpl import DocxTemplate
+import zipfile, os
 
-excel_file = 'input.xlsx'
-word_file = 'template.docx'
-
-# 读取 Excel 文件
-df = pd.read_excel(excel_file)
 
 output_dir = "output/"
-# print("output")
+filenames = os.listdir(output_dir)
 
-# 渲染 Word 文件
-for record in df.to_dict(orient="records"):
-    doc = DocxTemplate(word_file)
-    doc.render(record)
+# print(filenames)
 
-    output_path = output_dir + f"{record['filename']}"
+# 创建压缩文件
+zip_filename = output_dir + 'files.zip'
 
-    # print(output_path)
-    doc.save(output_path)
+with zipfile.ZipFile(zip_filename, 'w') as zip:
+    for filename in filenames:
+        #print(filename)
+        zip.write(output_dir+filename)
+    # 提供给用户下载
 
-print("done!")
+
+# return send_file(zip_filename, as_attachment=True)

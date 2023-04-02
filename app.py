@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file
+from flask import Flask, render_template, request, send_file, send_from_directory
 import pandas as pd
 from openpyxl import load_workbook
 from docx import Document
@@ -6,11 +6,14 @@ from docxtpl import DocxTemplate  # pip install docxtpl
 import docx
 # from docx.exceptions import PendingDeprecationWarning
 # import warnings
+import os
+import zipfile
 
 app = Flask(__name__)
 
 # 定义全局变量并初始化为0
 visit_count = 0
+files_count = 0
 
 @app.route('/')
 def index():
@@ -29,19 +32,26 @@ def render():
     df = pd.read_excel(excel_file)
 
     output_dir = "output/"
+
     # 渲染 Word 文件
     for record in df.to_dict(orient="records"):
         doc = DocxTemplate(word_file)
         doc.render(record)
-
         output_path = output_dir + f"{record['filename']}"
         doc.save(output_path)
+        global files_count
+        files_count += 1
 
-        # 保存渲染后的 Word 文件
-        # document.save('output.docx')
+    filenames = os.listdir(output_dir)
+    # 创建压缩文件
+    zip_filename = output_dir + 'files.zip'
+
+    with zipfile.ZipFile(zip_filename, 'w') as zip:
+        for filename in filenames:
+            zip.write(output_dir + filename)
 
     # 提供下载链接ggg
-    return send_file(output_path, as_attachment=True)
+    return send_file(zip_filename, as_attachment=True)
 
 @app.route('/doc')
 def doc():
@@ -49,7 +59,7 @@ def doc():
 
 @app.route('/about')
 def about():
-    return render_template('about.html', visit_count=visit_count)
+    return render_template('about.html', visit_count=visit_count, files_count=files_count)
 
 
 if __name__ == '__main__':
