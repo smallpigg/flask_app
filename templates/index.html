@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8">
-    <title>Excel to Word Renderer</title>
+    <title>Word文件自动填充程序</title>
     <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
@@ -68,7 +68,7 @@
   <body>
     <div class="container">
       <div class="box">
-        <h3 class="h3">Word文件生成程序</h3>
+        <h3 class="h3">Word文件自动填充程序</h3>
         <form action="{{ url_for('render') }}" method="post" enctype="multipart/form-data">
           <div class="form-control">
             <label for="excel-file">Excel数据文件:</label>
@@ -78,8 +78,15 @@
             <label for="word-file">Word模板文件:</label>
             <input type="file" name="word_file" id="word-file" accept=".docx" required>
           </div>
+          <div class="form-control">
+            <input type="checkbox" id="delete_blank_rows" name="delete_blank_rows" checked>
+            <label for="delete_blank_rows">删除多余空行</label>
+          </div>
           <div class="form-actions">
-            <button type="submit" class="btn">生成新文件</button>
+            <button type="submit" class="btn">生成</button>
+          </div>
+          <div class="doc-link">
+          <a href="{{ url_for('demo') }}">例子</a>
           </div>
           <div class="doc-link">
           <a href="{{ url_for('doc') }}">说明文档</a>

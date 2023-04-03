@@ -8,6 +8,16 @@ import docx
 # import warnings
 import os
 import zipfile
+import shutil
+
+
+def delete_empty_rows(table):
+    for row in table.rows:
+        first_cell = row.cells[0]
+        # print the text in the first cell
+        # print(first_cell.text)
+        if first_cell.text == '':
+            row._element.getparent().remove(row._element)
 
 app = Flask(__name__)
 
@@ -19,11 +29,14 @@ files_count = 0
 def index():
     global visit_count
     visit_count += 1
+
     return render_template('index.html')
 
 
 @app.route('/render', methods=['POST'])
 def render():
+    global visit_count
+
     # 获取上传的文件
     excel_file = request.files['excel_file']
     word_file = request.files['word_file']
@@ -31,27 +44,59 @@ def render():
     # 读取 Excel 文件
     df = pd.read_excel(excel_file)
 
-    output_dir = "output/"
+    home_path = os.getcwd()
+    # print("当前路径为：", current_path)
+    # os.chdir(home_path)
+
+    output_dir = "output\\" + str(visit_count) + "\\"
+    print(output_dir)
+
+    if os.path.exists(output_dir):
+        shutil.rmtree(output_dir)
+
+    os.makedirs(output_dir)
 
     # 渲染 Word 文件
     for record in df.to_dict(orient="records"):
         doc = DocxTemplate(word_file)
         doc.render(record)
-        output_path = output_dir + f"{record['filename']}"
+        output_path = output_dir + f"{record['文件名']}"
         doc.save(output_path)
         global files_count
         files_count += 1
 
+        checkbox_value = request.form.get('delete_blank_rows')
+        # print(checkbox_value)
+        if checkbox_value:
+            doc = docx.Document(output_path)
+            for table in doc.tables:
+                delete_empty_rows(table)
+            doc.save(output_path)
+
     filenames = os.listdir(output_dir)
+
+    print(filenames)
+
+    os.chdir(output_dir)
     # 创建压缩文件
-    zip_filename = output_dir + 'files.zip'
+    zip_filename = '结果.zip'
 
     with zipfile.ZipFile(zip_filename, 'w') as zip:
         for filename in filenames:
-            zip.write(output_dir + filename)
+            zip.write(filename)
+    os.chdir(home_path)
+    current_path = os.getcwd()
+    print("当前路径为：", current_path)
 
+    result_dir = output_dir + '结果.zip'
+    print(result_dir)
     # 提供下载链接ggg
-    return send_file(zip_filename, as_attachment=True)
+    return send_file(result_dir, as_attachment=True)
+
+@app.route('/demo')
+def demo():
+    demo_dir = '例子.zip'
+    return send_file(demo_dir, as_attachment=True)
 
 @app.route('/doc')
 def doc():
@@ -59,6 +104,7 @@ def doc():
 
 @app.route('/about')
 def about():
+    global visit_count
     return render_template('about.html', visit_count=visit_count, files_count=files_count)
 
 
