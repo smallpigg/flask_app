@@ -10,8 +10,9 @@ import shutil
 def delete_empty_rows(table):
     for row in table.rows:
         first_cell = row.cells[0]
-        if first_cell.text == 'nan':
+        if first_cell.text == 'nan' or first_cell.text == '':
             row._element.getparent().remove(row._element)
+
 
 app = Flask(__name__)
 
